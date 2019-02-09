@@ -1,20 +1,35 @@
 ### This is the main screen where you select where you want to go. Had to split it up in many parts because it would of been awful to include all of this in one python file ###
 
-import subprocess, sys, os, shutil, platform 
+import subprocess, sys, os, shutil, platform, os.path, pathlib
+from pathlib import Path
 from VXGUI.StdColors import red
 from VXGUI.Geometry import offset_rect, rect_sized
 from VXGUI import Window, Image, View, Button, Label, application, TextField
 from VXGUI.Alerts import note_alert
+from datetime import datetime
+from datetime import *
 win = Window(title = "USAF Delayed Entry Program")
 
 
+## File Integrity Check ##
+userinfo = Path("userinfo.ini")
+if userinfo.is_file():
+	print("File Integrity Pass")
+else:
+	print("Creating userinfo.ini")
+	ff2 = open("userinfo.ini","w")
+	ff2.close()
+
+
+## Button Commands ##
 def packing():
 	os.startfile("lib\packing.py")
 
 def write(lastname, startdate):
 	file = open("userinfo.ini","w") 
-	file.write(lastname.text + '\n')
-	file.write(startdate.text + '\n')
+	file.write(lastname.text)
+	file.write("\n")
+	file.write(startdate.text)
 	file.close()
 
 def editbmttime():
@@ -46,11 +61,24 @@ class ImageTestView(View):
         image.draw(c, src_rect, dst_rect)
 
 ## Getting BMT Text ##
-with open('userinfo.ini') as f:
-    last_name = f.readline()
+file1 = open("userinfo.ini", "r")
+last_name = file1.readline()
 
-with open('userinfo.ini') as f:
-    start_date = f.readline(2)
+file2 = open("userinfo.ini", "r")
+start_date = file2.readline(23)
+
+if os.path.exists("userinfo.ini") and os.path.getsize("userinfo.ini") > 0:
+	open('userinfo.ini')
+	c.readlines() as s
+#
+#start_date = lines[2]
+
+
+#date_format = "%m/%d/%Y"
+#a = datetime.strptime(start_date, date_format)
+#b = today
+#delta = b - a
+#print("delta")
 
 
 ## Label and Image Placement ##
@@ -58,8 +86,10 @@ image_path = "images/main.png"
 image = Image(file = image_path)
 view = ImageTestView(size = (815,480))
 showlastname = Label(text = "Welcome " + last_name, position = (290, 490))
+showbmtdate = Label(text = "BMT Start Date: " + start_date, position = (305, 600))
 win.add(view)
 win.add(showlastname)
+win.add(showbmtdate)
 
 
 ## Buttons ##
