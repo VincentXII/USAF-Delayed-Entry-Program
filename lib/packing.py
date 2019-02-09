@@ -1,4 +1,5 @@
-### This is the main screen where you select where you want to go. Had to split it up in many parts because it would of been awful to include all of this in one python file ###
+### This is the packing information screen
+
 
 import subprocess, sys, os, shutil, platform 
 from VXGUI.StdColors import red
@@ -6,6 +7,7 @@ from VXGUI.Geometry import offset_rect, rect_sized
 from VXGUI import Window, Image, View, Button, Label, application
 from VXGUI.Alerts import note_alert
 win = Window(title = "Packing")
+
 
 def packing():
 	import packing
