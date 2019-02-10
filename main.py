@@ -1,13 +1,15 @@
 ### This is the main screen where you select where you want to go. Had to split it up in many parts because it would of been awful to include all of this in one python file ###
 
-import subprocess, sys, os, shutil, platform, os.path, pathlib
+import subprocess, sys, os, shutil, platform, os.path, pathlib, linecache
 from pathlib import Path
-from VXGUI.StdColors import red
+from VXGUI.StdButtons import DefaultButton, CancelButton
+from VXGUI.StdFonts import system_font
+from VXGUI.StdColors import blue
 from VXGUI.Geometry import offset_rect, rect_sized
-from VXGUI import Window, Image, View, Button, Label, application, TextField
+from VXGUI import Window, ModalDialog, Image, View, Font, Button, Label, \
+    TextField, application
+
 from VXGUI.Alerts import note_alert
-from datetime import datetime
-from datetime import *
 win = Window(title = "USAF Delayed Entry Program")
 
 
@@ -26,11 +28,12 @@ def packing():
 	os.startfile("lib\packing.py")
 
 def write(lastname, startdate):
-	file = open("userinfo.ini","w") 
-	file.write(lastname.text)
-	file.write("\n")
-	file.write(startdate.text)
-	file.close()
+	usrwrite = open("userinfo.ini","w") 
+	usrwrite.write(lastname.text)
+	usrwrite.write("\n")
+	usrwrite.write(startdate.text)
+	usrwrite.close()
+
 
 def editbmttime():
     win = Window(size = (480, 200), title = "Welcome to Delayed Entry Program")
@@ -61,32 +64,20 @@ class ImageTestView(View):
         image.draw(c, src_rect, dst_rect)
 
 ## Getting BMT Text ##
-file1 = open("userinfo.ini", "r")
-last_name = file1.readline()
+lastnamread = open("userinfo.ini", "r")
+last_name = lastnamread.readline()
+lastnamread.close()
 
-file2 = open("userinfo.ini", "r")
-start_date = file2.readline(23)
-
-if os.path.exists("userinfo.ini") and os.path.getsize("userinfo.ini") > 0:
-	open('userinfo.ini')
-	c.readlines() as s
-#
-#start_date = lines[2]
-
-
-#date_format = "%m/%d/%Y"
-#a = datetime.strptime(start_date, date_format)
-#b = today
-#delta = b - a
-#print("delta")
+start_date = linecache.getline("userinfo.ini", 2)
 
 
 ## Label and Image Placement ##
+big = Font("Consolas", 2 * system_font.size, ['bold'])
 image_path = "images/main.png"
 image = Image(file = image_path)
 view = ImageTestView(size = (815,480))
-showlastname = Label(text = "Welcome " + last_name, position = (290, 490))
-showbmtdate = Label(text = "BMT Start Date: " + start_date, position = (305, 600))
+showlastname = Label(text = "Welcome " + last_name, position = (300, 490), font = big, color = blue)
+showbmtdate = Label(text = "BMT Start Date: " + start_date, position = (260, 520), font = big, color = blue)
 win.add(view)
 win.add(showlastname)
 win.add(showbmtdate)
@@ -96,11 +87,11 @@ win.add(showbmtdate)
 bt = [
     Button("Packing", action = packing),
 ]
-updatebmt = Button("Update BMT Date", position = (290, 570) ,action = editbmttime)
+updatebmt = Button("Update BMT Date", position = (320, 550) ,action = editbmttime)
 win.add(updatebmt)
 
 ## Building the window ##
 win.place_column(bt, left = 170, top = 520)
-win.size = (815, 960)
+win.size = (815, 900)
 win.show()
 application().run() 
